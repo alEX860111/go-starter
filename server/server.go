@@ -8,7 +8,7 @@ import (
 
 type page struct {
 	Title string
-	Date  string
+	Time  string
 }
 
 var templates = template.Must(template.ParseFiles("index.html"))
