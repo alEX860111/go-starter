@@ -2,39 +2,30 @@ package main
 
 import (
 	"html/template"
-	"io"
-	"log"
 	"net/http"
 	"time"
 )
 
-type pageData struct {
-	Date string
-	Time string
+type page struct {
+	Title string
+	Date  string
 }
+
+var templates = template.Must(template.ParseFiles("index.html"))
 
 func main() {
 	http.HandleFunc("/", renderHomepage)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	http.ListenAndServe(":8080", nil)
 }
 
-func renderHomepage(wr http.ResponseWriter, r *http.Request) {
-	now := time.Now()
-	data := pageData{
-		Date: now.Format("02-01-2006"),
-		Time: now.Format("15:04:05"),
-	}
-
-	renderTemplate(wr, "index.html", data)
+func renderHomepage(w http.ResponseWriter, r *http.Request) {
+	page := page{"Hello Go", time.Now().Format(time.RFC1123)}
+	renderTemplate(w, "index.html", page)
 }
 
-func renderTemplate(wr io.Writer, templateName string, data interface{}) {
-	t, err := template.ParseFiles(templateName)
+func renderTemplate(w http.ResponseWriter, templateName string, data interface{}) {
+	err := templates.ExecuteTemplate(w, templateName, data)
 	if err != nil {
-		log.Fatalln("template parsing error: ", err)
-	}
-	err = t.Execute(wr, data)
-	if err != nil {
-		log.Fatalln("template executing error: ", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
