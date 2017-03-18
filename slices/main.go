@@ -19,6 +19,18 @@ func main() {
 
 	letters := []string{"a", "b", "c"}
 	printSlice(letters, "letters")
+
+	strings := make([]string, 0, 2)
+	printSlice(strings, "strings")
+
+	strings = append(strings, "x", "y", "z")
+	printSlice(strings, "strings")
+
+	strings = strings[1:]
+	printSlice(strings, "strings")
+
+	strings = strings[:len(strings)-1]
+	printSlice(strings, "strings")
 }
 
 func printSlice(s []string, name string) {
